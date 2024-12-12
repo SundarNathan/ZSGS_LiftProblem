@@ -1,0 +1,256 @@
+import java.util.Scanner;
+
+public class Lift {
+    static int[] l= new int[5];
+
+
+    void position()
+    {
+        System.out.println("Positions of the lift: ");
+
+        for(int i=0;i<5;i++)
+        {
+            System.out.println("L"+(i+1)+": "+l[i]);
+        }
+    }
+
+    int nearCheck(int mn, int a, int b, int c)
+    {
+        int count=0;
+        if(mn==a)
+            count++;
+        if(mn==b)
+            count++;
+        if(mn==c)
+            count++;
+
+        return count;
+    }
+
+    boolean checkDir(int ln, int s, int dir)
+    {
+        return (l[ln-1]-s)>0&&dir>0|| (l[ln-1]-s)<0&&dir<0;
+    }
+    void lift125(int s, int d)
+    {
+        int l1= Integer.MAX_VALUE;
+        if(l[0]!=-1)
+            l1= Math.abs(l[0]-s);
+        int l2= Integer.MAX_VALUE;
+        if(l[1]!=-1)
+            l2= Math.abs(l[1]-s);
+        int l5= Integer.MAX_VALUE;
+        if(l[4]!=-1)
+            l5= Math.abs(l[4]-s);
+
+
+        int mn= Math.min(l1, Math.min(l2,l5));
+
+        int c= nearCheck(mn, l1,l2,l5);
+
+        if(c==1)
+        {
+            if(mn==l1)
+                l[0]=d;
+            else if(mn==l2)
+                l[1]=d;
+            else
+                l[4]=d;
+        }
+
+        if(c==2||c==3)
+        {
+            if(l1==l2&&mn==l1)
+            {
+                boolean b1=checkDir(1, s, s-d);
+                boolean b2=checkDir(2,s,s-d);
+
+                if((b1&&b2)||!(b1||b2)||b1)
+                    l[0]=d;
+                else
+                    l[1]=d;
+            }
+            else if(l1==l5&&mn==l1)
+            {
+                boolean b1=checkDir(1, s, s-d);
+                boolean b5=checkDir(5,s,s-d);
+
+                if((b1&&b5)||!(b1||b5)||b1)
+                    l[0]=d;
+                else
+                    l[4]=d;
+            }
+            else if(l5==l2&&mn==l2)
+            {
+                boolean b5=checkDir(5, s, s-d);
+                boolean b2=checkDir(2,s,s-d);
+
+                if((b5&&b2)||!(b5||b2)||b2)
+                    l[1]=d;
+                else
+                    l[4]=d;
+            }
+        }
+
+
+    }
+
+    void lift345(int s, int d)
+    {
+        int l3= Integer.MAX_VALUE;
+        if(l[2]!=-1)
+            l3= Math.abs(l[2]-s);
+        int l4= Integer.MAX_VALUE;
+        if(l[3]!=-1)
+            l4= Math.abs(l[3]-s);
+        int l5= Integer.MAX_VALUE;
+        if(l[4]!=-1)
+            l5= Math.abs(l[4]-s);
+
+
+        int ld3= Integer.MAX_VALUE;
+        if(l[2]!=-1)
+            ld3= Math.abs(l[2]-d);
+        int ld4= Integer.MAX_VALUE;
+        if(l[3]!=-1)
+            ld4= Math.abs(l[3]-d);
+        int ld5= Integer.MAX_VALUE;
+        if(l[4]!=-1)
+            ld5= Math.abs(l[4]-d);
+
+
+
+        int mn= Math.min(l4, Math.min(l3,l5));
+
+        int c= nearCheck(mn, l4,l3,l5);
+
+        if(c==1)
+        {
+            if(mn==l3)
+                l[2]=d;
+            else if(mn==l4)
+                l[3]=d;
+            else {
+
+                if(d==0) {
+
+                    if((l3+s-d-5<l5+s-d)||((l3+s-d-5==l5+s-d)&&l[2]==s)) {
+//                        System.out.println("debug: "+(l3+s-d-5<l5+s-d)+" "+((l3+s-d-5==l5+s-d)&&l[2]==s));
+                        l[2] = d;
+                    }
+                    else if ((l4+s-d-5<=l5+s-d)||((l4+s-d-5==l5+s-d)&&l[3]==s))
+                        l[3] = d;
+                    else {
+
+                        l[4] = d;
+                    }
+                }
+                else
+                    l[4] = d;
+            }
+        }
+
+        if(c==2||c==3)
+        {
+            if(l3==l4&&mn==l3)
+            {
+                boolean b3=checkDir(3, s, s-d);
+                boolean b4=checkDir(4,s,s-d);
+
+                if((b3&&b4)||!(b3||b4)||b3)
+                    l[2]=d;
+                else
+                    l[3]=d;
+            }
+            else if(l3==l5&&mn==l3)
+            {
+                boolean b3=checkDir(3, s, s-d);
+                boolean b5=checkDir(5,s,s-d);
+
+                if((b3&&b5)||!(b3||b5)||b3)
+                    l[2]=d;
+                else
+                    l[4]=d;
+            }
+            else if(l5==l4&&mn==l4)
+            {
+                boolean b5=checkDir(5, s, s-d);
+                boolean b4=checkDir(4,s,s-d);
+
+                if((b5&&b4)||!(b5||b4)||b4)
+                    l[3]=d;
+                else
+                    l[4]=d;
+            }
+        }
+    }
+    void travel(int s, int d)
+    {
+        if(s<5&& d<=5)
+            lift125(s,d);
+        else if((s==0||d==0)||(s>5&&d>5))
+            lift345(s,d);
+        else if((s<=5&&d>=6||(s>5&&d<6))&&l[4]==-1)
+        {
+            System.out.println("Lift-5 under maintenance. Cant directly go from floor no. "+s+" to "+d+" can only go upto floor 5 for the give source");
+        }
+        else
+            l[4]=d;
+
+
+
+    }
+    public static void main(String[] args) {
+
+        Scanner sc= new Scanner(System.in);
+
+        System.out.print("Enter the capacity of the lift: ");
+        int capacity= sc.nextInt();
+
+        sc.nextLine();
+        System.out.print("Any lift under maintenance (enter y/Y for yes or any other key for no): ");
+        char c= sc.nextLine().charAt(0);
+
+        int n=0;
+        if(Character.toLowerCase(c)=='y')
+        {
+            System.out.print("Enter the lift no. (1 to 5) which is under maintenance:");
+            n= sc.nextInt();
+            l[n-1]=-1;
+        }
+
+        Lift lift= new Lift();
+
+        lift.position();
+
+        boolean tr=true;
+
+        while (tr)
+        {
+            System.out.println("Travel from: ");
+            int s=sc.nextInt();
+            System.out.println("Travel to: ");
+            int d= sc.nextInt();
+
+            System.out.println("No. of people travelling: ");
+            int nu= sc.nextInt();
+
+            sc.nextLine();
+
+            while(nu>0)
+            {
+                lift.travel(s, d);
+                lift.position();
+                nu -= capacity;
+            }
+            System.out.print("want to make another travel(press 'Y' for yes or any other key for no): ");
+            char yn= sc.nextLine().charAt(0);
+
+            if(Character.toLowerCase(yn)!='y')
+                tr=false;
+
+        }
+
+
+    }
+}
